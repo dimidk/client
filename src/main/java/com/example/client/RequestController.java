@@ -29,7 +29,7 @@ public class RequestController {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         //    responseEntity = restTemp.postForEntity("http://localhost:8060/update",
-        responseEntity = restTemplate.postForEntity("http://localhost:8000/connect",
+        responseEntity = restTemplate.postForEntity("http://localhost:8000/auth/connect",
                 new HttpEntity<UsersDB>(user,headers),
                 UsersDB.class);
 
@@ -37,22 +37,28 @@ public class RequestController {
             logger.info("redirect to node for read requests");
         }
         this.node = responseEntity.getBody().database;
+
+        UsersDB usersDB = responseEntity.getBody();
+        logger.info(usersDB.getDatabase());
         return responseEntity.getBody();
     }
 
     @PostMapping("/registration")
-    public HttpStatus registration(@RequestBody UsersDB user){
+    public UsersDB registration(@RequestBody UsersDB user){
 
+        String response = null;
         ResponseEntity<UsersDB> responseEntity;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
 
-        responseEntity = restTemplate.postForEntity("http://localhost:8000/register",
+        responseEntity = restTemplate.postForEntity("http://localhost:8000/registration",
                 new HttpEntity<UsersDB>(user,headers),
                 UsersDB.class);
 
-        return responseEntity.getStatusCode();
+        //if (responseEntity.getStatusCode() == HttpStatus.OK)
+        //    response = "User created!";
+        return responseEntity.getBody();
     }
 
     @GetMapping("/read")
